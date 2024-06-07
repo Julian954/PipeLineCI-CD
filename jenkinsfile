@@ -15,7 +15,9 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                // Instalar las dependencias de Node.js (asume que hay un package.json en el proyecto)
+                // Usar la versión de NodeJS configurada en Jenkins
+                tool name: 'Nodejs 16', type: 'NodeJSInstallation'
+                // Instalar las dependencias de Node.js
                 sh 'npm install'
             }
         }
