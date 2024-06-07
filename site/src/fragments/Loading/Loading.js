@@ -1,19 +1,23 @@
-import React, { Component } from 'react'
-import styles from './Loading.module.css'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styles from './Loading.module.css';
 
 export default class Loading extends Component {
+  static propTypes = {
+    className: PropTypes.string, // Valida que 'className' sea una cadena opcional
+  };
 
   constructor(props) {
-    super(props)
-    this.state = {}
+    super(props);
+    this.state = {};
   }
 
   async componentDidMount() {}
 
   render() {
     return (
-      <div className={`${this.props.className}`}>
-        <div className={`${styles.container}`}>
+      <div className={this.props.className}>
+        <div className={styles.container}>
 
           <img
             draggable={false}
@@ -27,6 +31,6 @@ export default class Loading extends Component {
 
         </div>
       </div>
-    )
+    );
   }
 }

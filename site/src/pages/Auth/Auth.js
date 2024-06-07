@@ -1,135 +1,117 @@
-import React, { Component } from 'react'
-import {
-  Link,
-  withRouter,
-} from 'react-router-dom'
-import Loading from '../../fragments/Loading'
-import styles from './Auth.module.css'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Link, withRouter } from 'react-router-dom';
+import Loading from '../../fragments/Loading';
+import styles from './Auth.module.css';
 import {
   userRegister,
   userLogin,
   userGet,
   saveSession,
-} from '../../utils'
+} from '../../utils';
 
 class Auth extends Component {
+  static propTypes = {
+    history: PropTypes.object.isRequired,
+  };
 
   constructor(props) {
-    super(props)
+    super(props);
 
-    const pathName = window.location.pathname.replace('/', '')
+    const pathName = window.location.pathname.replace('/', '');
 
-    this.state = {}
-    this.state.state = pathName
-    this.state.loading = true
-    this.state.error = null
-    this.state.formEmail = ''
-    this.state.formPassword = ''
+    this.state = {
+      state: pathName,
+      loading: true,
+      error: null,
+      formEmail: '',
+      formPassword: '',
+    };
 
     // Bindings
-    this.handleFormInput = this.handleFormInput.bind(this)
-    this.handleFormSubmit = this.handleFormSubmit.bind(this)
-    this.handleFormTypeChange = this.handleFormTypeChange.bind(this)
+    this.handleFormInput = this.handleFormInput.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.handleFormTypeChange = this.handleFormTypeChange.bind(this);
   }
 
-  /**
-   * Component did mount
-   */
   componentDidMount() {
     this.setState({
-      loading: false
-    })
+      loading: false,
+    });
 
     // Clear query params
-    const url = document.location.href
-    window.history.pushState({}, '', url.split('?')[0])
+    const url = document.location.href;
+    window.history.pushState({}, '', url.split('?')[0]);
   }
 
-  /**
-   * Handles a form change
-   */
   handleFormTypeChange(type) {
-    this.setState({ state: type },
-      () => {
-        this.props.history.push(`/${type}`)
-      })
+    this.setState({ state: type }, () => {
+      this.props.history.push(`/${type}`);
+    });
   }
 
-  /**
-   * Handle text changes within form fields
-   */
   handleFormInput(field, value) {
-    value = value.trim()
+    value = value.trim();
 
-    const nextState = {}
-    nextState[field] = value
+    const nextState = {};
+    nextState[field] = value;
 
-    this.setState(Object.assign(this.state, nextState))
+    this.setState(Object.assign(this.state, nextState));
   }
 
-  /**
-   * Handles form submission
-   * @param {object} evt 
-   */
   async handleFormSubmit(evt) {
-    evt.preventDefault()
+    evt.preventDefault();
 
-    this.setState({ loading: true })
+    this.setState({ loading: true });
 
-    // Validate email
     if (!this.state.formEmail) {
       return this.setState({
         loading: false,
-        formError: 'email is required'
-      })
+        formError: 'email is required',
+      });
     }
 
-    // Validate password
     if (!this.state.formPassword) {
       return this.setState({
         loading: false,
-        formError: 'password is required'
-      })
+        formError: 'password is required',
+      });
     }
 
-    let token
+    let token;
     try {
       if (this.state.state === 'register') {
-        token = await userRegister(this.state.formEmail, this.state.formPassword)
+        token = await userRegister(this.state.formEmail, this.state.formPassword);
       } else {
-        token = await userLogin(this.state.formEmail, this.state.formPassword)
+        token = await userLogin(this.state.formEmail, this.state.formPassword);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       if (error.message) {
         this.setState({
           formError: error.message,
-          loading: false
-        })
+          loading: false,
+        });
       } else {
         this.setState({
-          formError: 'Sorry, something unknown went wrong.  Please try again.',
-          loading: false
-        })
+          formError: 'Sorry, something unknown went wrong. Please try again.',
+          loading: false,
+        });
       }
-      return
+      return;
     }
 
-    // Fetch user record and set session in cookie
-    let user = await userGet(token.token)
-    user = user.user
-    saveSession(user.id, user.email, token.token)
+    let user = await userGet(token.token);
+    user = user.user;
+    saveSession(user.id, user.email, token.token);
 
-    window.location.replace('/')
+    window.location.replace('/');
   }
 
   render() {
-
     return (
       <div className={`${styles.container} animateFadeIn`}>
         <div className={styles.containerInner}>
-
-          { /* Logo */}
 
           <Link to='/' className={`${styles.logo}`}>
             <img
@@ -139,29 +121,25 @@ class Auth extends Component {
             />
           </Link>
 
-          { /* Loading */}
-
           {this.state.loading && (
             <div>
-              {< Loading className={styles.containerLoading} />}
+              {<Loading className={styles.containerLoading} />}
             </div>
           )}
-
-          { /* Registration Form */}
 
           {!this.state.loading && (
             <div className={styles.formType}>
               <div
                 className={
-                  `${styles.formTypeRegister} 
-                ${this.state.state === 'register' ? styles.formTypeActive : ''}`}
+                  `${styles.formTypeRegister}
+                  ${this.state.state === 'register' ? styles.formTypeActive : ''}`}
                 onClick={(e) => { this.handleFormTypeChange('register') }}>
                 Register
               </div>
               <div
                 className={
-                  `${styles.formTypeSignIn} 
-                ${this.state.state === 'login' ? styles.formTypeActive : ''}`}
+                  `${styles.formTypeSignIn}
+                  ${this.state.state === 'login' ? styles.formTypeActive : ''}`}
                 onClick={(e) => { this.handleFormTypeChange('login') }}>
                 Sign-In
               </div>
@@ -202,7 +180,6 @@ class Auth extends Component {
                   type='submit'
                   value='Register'
                 />
-
               </form>
             </div>
           )}
@@ -242,8 +219,8 @@ class Auth extends Component {
           )}
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default withRouter(Auth)
+export default withRouter(Auth);
