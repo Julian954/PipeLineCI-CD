@@ -26,3 +26,14 @@ jobs:
 
     - name: Run tests
       run: npm test
+
+    - name: Notify by Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.example.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: 'Workflow Succeeded/Failed'
+        body: 'The workflow has completed successfully/failed.'
+        to: minibodowashere@gmail.com
