@@ -1,6 +1,6 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Funciona 1000
+## Funciona 1500
 prueba
 In the project directory, you can run:
 
