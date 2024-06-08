@@ -1,11 +1,12 @@
-import React, { Component } from 'react'
-import styles from './Loading.module.css'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types'; // Importar PropTypes
+import styles from './Loading.module.css';
 
 export default class Loading extends Component {
 
   constructor(props) {
-    super(props)
-    this.state = {}
+    super(props);
+    this.state = {};
   }
 
   async componentDidMount() {}
@@ -30,3 +31,8 @@ export default class Loading extends Component {
     )
   }
 }
+
+// Añadir la validación de PropTypes
+Loading.propTypes = {
+  className: PropTypes.string
+};
