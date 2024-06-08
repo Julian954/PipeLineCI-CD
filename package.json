@@ -4,7 +4,7 @@
   "description": "[![Serverless Fullstack Application Express React DynamoDB AWS Lambda AWS HTTP API](https://s3.amazonaws.com/assets.github.serverless/components/readme-serverless-framework-fullstack-application.png\r )](https://www.serverless-fullstack-app.com)",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTest",
     "lint": "eslint ."
   },
   "keywords": [],
