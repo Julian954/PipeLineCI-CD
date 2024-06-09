@@ -18,5 +18,6 @@ RUN apt install nodejs npm -y
 EXPOSE 80
 
 # Define el comando para iniciar la aplicación
-#CMD [ "npm", "start" ]
+# Especifica el comando predeterminado para ejecutar cuando se inicia el contenedor
+CMD ["nginx", "-g", "daemon off;"]
 
