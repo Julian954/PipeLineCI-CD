@@ -9,7 +9,7 @@ RUN apt install nginx -y
 COPY . .
 
 # Instala las dependencias de Node.js
-RUN npm install
+RUN apt install nodejs npm
 
 # Compila la aplicación (asume que tienes un script "build" en package.json)
 #RUN npm run build
