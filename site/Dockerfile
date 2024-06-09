@@ -2,7 +2,7 @@
 FROM node:16
 
 # Copia los archivos de la aplicación
-COPY ../site/ /
+COPY . .
 
 # Instala las dependencias de Node.js
 RUN npm install
