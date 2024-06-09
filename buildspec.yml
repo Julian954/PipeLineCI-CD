@@ -10,29 +10,32 @@ phases:
       - timeout 60 sh -c "until docker info; do echo .; sleep 1; done"
   pre_build:
     commands:
-      - echo Logging in to Docker Hub...
-      - docker login -u jordan743 -p Gg7HADz9neyjiH
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 434167029606.dkr.ecr.us-east-1.amazonaws.com/eknownx-test
-      - REPOSITORY_URI=434167029606.dkr.ecr.us-east-1.amazonaws.com/eknownx-test
+      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 851725240809.dkr.ecr.us-east-2.amazonaws.com 
+      - REPOSITORY_URI=851725240809.dkr.ecr.us-east-2.amazonaws.com/site
+      - echo Creando uri2
+      - REPOSITORY_URI2=851725240809.dkr.ecr.us-east-2.amazonaws.com/api
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:latest .
+      - docker build -t $REPOSITORY_URI:latest site/
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - echo Docker build 2
+      - docker build -t $REPOSITORY_URI2:latest api/
+      - docker tag $REPOSITORY_URI2:latest $REPOSITORY_URI2:$IMAGE_TAG
   post_build:
     commands:
-      - echo Run Docker
-      - docker run -dit --name contenedor -p 80:80 --privileged=true $REPOSITORY_URI
-      - docker logs --details contenedor 
-      - sleep 240 
       - echo Pushing the Docker image to Amazon ECR...
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
       - printf '[{"name":"exp-code-pipeline","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-
+      - echo post build 
+      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 851725240809.dkr.ecr.us-east-2.amazonaws.com
+      - docker push $REPOSITORY_URI2:latest
+      - docker push $REPOSITORY_URI2:$IMAGE_TAG
+      - echo Termino
 artifacts:
   files: imagedefinitions.json
