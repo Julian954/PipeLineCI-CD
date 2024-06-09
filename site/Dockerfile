@@ -6,7 +6,7 @@ COPY . .
 
 # Instala las dependencias de Node.js
 RUN npm install
-
+RUN npm install react-dom/client
 # Compila la aplicación (asume que tienes un script "build" en package.json)
 RUN npm run build
 
