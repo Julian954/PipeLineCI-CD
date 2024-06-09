@@ -5,7 +5,7 @@ A complete, serverless, full-stack application built on AWS Lambda, AWS HTTP API
 
 #### Live Demo: [https://www.serverless-fullstack-app.com](https://www.serverless-fullstack-app.com)
 
-## Quick Start 1
+## Quick Start
 
 Install the latest version of the Serverless Framework:
 
