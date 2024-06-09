@@ -1,5 +1,9 @@
 # Usa una imagen base de Node.js
-FROM node:16
+FROM ubuntu:jammy
+
+RUN apt update -y
+
+RUN apt install nginx -y
 
 # Copia los archivos de la aplicación
 COPY . .
@@ -11,7 +15,8 @@ RUN npm install
 #RUN npm run build
 
 # Expone el puerto en el que la aplicación escuchará (por ejemplo, un servidor estático)
-EXPOSE 3000
+EXPOSE 80
 
 # Define el comando para iniciar la aplicación
 #CMD [ "npm", "start" ]
+
