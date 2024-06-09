@@ -3,6 +3,9 @@ pipeline {
 
     environment {
         GITHUB_CREDENTIALS_ID = 'git'  // ID de las credenciales de GitHub en Jenkins
+        API_PATH = 'api'               // Ruta de la carpeta de la API
+        WEBSITE_PATH = 'website'       // Ruta de la carpeta del Website
+        SERVERLESS_CLI = 'node_modules/.bin/sls'  // Ubicación del CLI de Serverless Framework
     }
 
     stages {
@@ -13,26 +16,88 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Setup Environment') {
             steps {
                 // Usar la versión de NodeJS configurada en Jenkins
                 tool name: 'Nodejs 16', type: 'NodeJSInstallation'
-                // Instalar las dependencias de Node.js
-                sh 'npm install'
+                // Instalar Serverless Framework globalmente si no está instalado
+                script {
+                    if (!fileExists(env.SERVERLESS_CLI)) {
+                        sh 'npm install -g serverless'
+                    }
+                }
             }
         }
 
-        stage('Unit Tests') {
+        stage('Install Dependencies for API') {
             steps {
-                // Ejecutar pruebas unitarias (asume que hay un script de pruebas definido en package.json)
-                sh 'npm test'
+                dir(env.API_PATH) {
+                    // Instalar dependencias de Node.js para la API
+                    sh 'npm install'
+                }
             }
         }
 
-        stage('Linting') {
+        stage('Install Dependencies for Website') {
             steps {
-                // Ejecutar el linter para verificar la calidad del código (asume que ESLint está configurado en package.json)
-                sh 'npm run lint'
+                dir(env.WEBSITE_PATH) {
+                    // Instalar dependencias de Node.js para el Website
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Unit Tests for API') {
+            steps {
+                dir(env.API_PATH) {
+                    // Ejecutar pruebas unitarias de la API
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Unit Tests for Website') {
+            steps {
+                dir(env.WEBSITE_PATH) {
+                    // Ejecutar pruebas unitarias del Website
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Linting for API') {
+            steps {
+                dir(env.API_PATH) {
+                    // Ejecutar el linter para verificar la calidad del código de la API
+                    sh 'npm run lint'
+                }
+            }
+        }
+
+        stage('Linting for Website') {
+            steps {
+                dir(env.WEBSITE_PATH) {
+                    // Ejecutar el linter para verificar la calidad del código del Website
+                    sh 'npm run lint'
+                }
+            }
+        }
+
+        stage('Deploy API to AWS Lambda') {
+            steps {
+                dir(env.API_PATH) {
+                    // Desplegar la API usando Serverless Framework
+                    sh 'serverless deploy'
+                }
+            }
+        }
+
+        stage('Deploy Website to AWS Lambda') {
+            steps {
+                dir(env.WEBSITE_PATH) {
+                    // Desplegar el Website usando Serverless Framework
+                    sh 'serverless deploy'
+                }
             }
         }
     }
